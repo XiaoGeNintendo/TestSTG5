@@ -1,5 +1,6 @@
-# Koto
+# TestSTG5
+This is the fifth installment of TestSTG series.
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7afd1def08274d0eb292fb779d4d7125)](https://www.codacy.com/gh/HellHoleStudios/koto/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=HellHoleStudios/koto&amp;utm_campaign=Badge_Grade)
+This repo is an official enhancement to the forked repo Koto, including a demo game.
 
-Kotlin Touhou Engine
+For full added feature list, please visit [project](https://github.com/XiaoGeNintendo/TestSTG5/projects/1)
