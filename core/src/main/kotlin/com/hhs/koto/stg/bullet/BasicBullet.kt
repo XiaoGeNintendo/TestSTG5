@@ -46,6 +46,7 @@ open class BasicBullet(
     val data: BulletData,
     var scaleX: Float = 1f,
     var scaleY: Float = 1f,
+    override var destroyable: Boolean = true,
     override var rotation: Float = 0f,
     override var tint: Color = NO_TINT_HSV,
     val delay: Int = 8,

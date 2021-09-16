@@ -54,7 +54,9 @@ object Stage2Spell1 : BasicSpell<AyaBoss>(AyaBoss::class.java) {
             val hash = ((playerX.hashCode() + boss.x.hashCode() + game.frame.hashCode()) and 0xf) + 1
             repeat(18) {
                 if (it != hash) {
-                    create("DS_BALL_M_A_BLUE", -180f + 20f * it, 0f, 2f, -90f)
+                    create("DS_BALL_M_A_BLUE", -180f + 20f * it, 0f, 2f, -90f).apply {
+                        destroyable=false
+                    }
                 }
             }
             wait(30)

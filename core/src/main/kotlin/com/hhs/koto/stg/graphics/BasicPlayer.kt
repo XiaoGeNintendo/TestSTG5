@@ -195,7 +195,9 @@ open class BasicPlayer(
                 game.bullets.forEach {
                     if (collide(it.collision, it.x, it.y, hitCollision, x, y)) {
                         hit = true
-                        it.kill()
+                        if(it.destroyable) {
+                            it.kill()
+                        }
                     }
                 }
                 if (hit) {
@@ -286,13 +288,19 @@ open class BasicPlayer(
                 repeat(50) {
                     collision.radius += 10f
                     game.bullets.forEach {
-                        if (collide(collision, x, y, it.collision, it.x, it.y)) it.destroy()
+                        if (it.destroyable && collide(collision, x, y, it.collision, it.x, it.y)){
+                            it.destroy()
+                        }
                     }
                     game.enemies.forEach {
-                        if (it is BasicEnemy && collide(collision, x, y, it.bulletCollision, it.x, it.y)) it.destroy()
+                        if (it is BasicEnemy && collide(collision, x, y, it.bulletCollision, it.x, it.y)){
+                            it.onHit(16f,true)
+                        }
                     }
                     game.bosses.forEach {
-                        it.onHit(16f, true)
+                        if (it is BasicBoss && collide(collision, x, y, it.bulletCollision, it.x, it.y)){
+                            it.onHit(16f,true)
+                        }
                     }
                     yield()
                 }

@@ -43,7 +43,7 @@ open class PlayerBullet(
     rotation: Float = 0f,
     color: Color = Color.WHITE,
     delay: Int = 0,
-) : BasicBullet(x, y, speed, angle, data, scaleX, scaleY, rotation, color, delay) {
+) : BasicBullet(x, y, speed, angle, data, scaleX, scaleY, rotation = rotation, tint = color,delay = delay) {
     open fun hit(enemy: Enemy) {
         enemy.onHit(damage)
         game.score += (damage * 10).roundToLong()
