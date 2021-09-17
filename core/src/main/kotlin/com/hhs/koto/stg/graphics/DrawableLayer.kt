@@ -67,6 +67,15 @@ class DrawableLayer<T : Drawable>(override val zIndex: Int = 0) : Drawable {
         drawables.clear()
     }
 
+    /**
+     * Recycle objects marked with [recyclable]
+     *
+     * Called at the end of each stage automatically
+     */
+    fun recycle(){
+        drawables.removeAll { it.recyclable }
+    }
+
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
         var currentBlending = BlendingMode.ALPHA
         for (i in 0 until drawables.size) {
