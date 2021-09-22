@@ -52,6 +52,7 @@ import com.hhs.koto.stg.task.ParallelTask
 import com.hhs.koto.stg.task.Task
 import com.hhs.koto.util.*
 import ktx.app.clearScreen
+import space.earlygrey.shapedrawer.ShapeDrawer
 import java.util.*
 
 class KotoGame : Disposable {
@@ -85,6 +86,12 @@ class KotoGame : Disposable {
             A["shader/koto_hsv.frag"],
         ),
     )
+
+    /**
+     * Drawer to draw lasers
+     */
+    var drawer = ShapeDrawer(batch, getRegion("ui/blank.png"))
+
     val normalBatch = SpriteBatch()
     val background = DrawableLayer<Drawable>()
     val stage = DrawableLayer<Drawable>().apply {

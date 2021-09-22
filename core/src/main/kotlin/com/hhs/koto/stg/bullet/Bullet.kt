@@ -43,6 +43,7 @@ interface Bullet : Entity, Drawable {
      * Take this into consideration when designing bombs!
      */
     var destroyable: Boolean
+
     fun onGraze()
     fun attachTask(task: Task): Bullet
     fun task(index: Int, block: suspend CoroutineScope.() -> Unit): Bullet

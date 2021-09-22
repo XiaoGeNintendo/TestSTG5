@@ -44,6 +44,7 @@ import com.hhs.koto.demo.stage1.Stage1
 import com.hhs.koto.demo.stage1.Stage1Spell1
 import com.hhs.koto.demo.stage2.Stage2
 import com.hhs.koto.demo.stage2.Stage2Spell1
+import com.hhs.koto.demo.stage2.Stage2Spell2
 import com.hhs.koto.demo.stage_extra.StageExtra
 import com.hhs.koto.stg.GameBuilder
 import com.hhs.koto.stg.GameData
@@ -160,6 +161,7 @@ class KotoApp(val callbacks: KotoCallbacks) : ApplicationListener {
 
         GameBuilder.spells.add(Stage1Spell1)
         GameBuilder.spells.add(Stage2Spell1)
+        GameBuilder.spells.add(Stage2Spell2)
 
         loadGameData()
 

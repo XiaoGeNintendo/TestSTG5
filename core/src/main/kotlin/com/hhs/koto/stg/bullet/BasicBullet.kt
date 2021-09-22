@@ -26,10 +26,14 @@
 package com.hhs.koto.stg.bullet
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Array
 import com.hhs.koto.stg.Bounded
 import com.hhs.koto.stg.CollisionShape
+import com.hhs.koto.stg.NoCollision
 import com.hhs.koto.stg.particle.BulletDestroyParticle
 import com.hhs.koto.stg.particle.GrazeParticle
 import com.hhs.koto.stg.task.CoroutineTask
@@ -37,6 +41,9 @@ import com.hhs.koto.stg.task.Task
 import com.hhs.koto.util.*
 import kotlinx.coroutines.CoroutineScope
 import ktx.collections.GdxArray
+import ktx.math.vec2
+import space.earlygrey.shapedrawer.ShapeDrawer
+import java.awt.Shape
 
 open class BasicBullet(
     override var x: Float,
@@ -63,7 +70,13 @@ open class BasicBullet(
         }
     var attachedTasks: GdxArray<Task>? = null
     override val collision: CollisionShape
-        get() = data.collision
+        get() {
+            return if(isPartOfLaser()){
+                NoCollision() //TODO Laser Collision
+            }else {
+                data.collision
+            }
+        }
 
     override var speed: Float = speed
         set(value) {
@@ -87,6 +100,42 @@ open class BasicBullet(
         get() = data.texture.maxWidth * scaleX + data.texture.maxHeight * scaleY
     override val boundingRadiusY
         get() = data.texture.maxWidth * scaleX + data.texture.maxHeight * scaleY
+
+    //AIO laser related field
+    var prev: BasicBullet? = null
+    var next: BasicBullet? = null
+    var maxLength = -1f
+    var width = -1f
+
+    /**
+     * Only hitRatio part will be considered as hitbox
+     */
+    var hitRatio = 0.8f
+
+
+    fun getPreviousNode():BasicBullet?{
+        return if(prev==null || !prev!!.alive){
+            null
+        }else{
+            prev
+        }
+    }
+
+    fun getNextNode():BasicBullet?{
+        return if(next==null || !next!!.alive){
+            null
+        }else{
+            next
+        }
+    }
+
+    fun isPartOfLaser(): Boolean{
+        return getPreviousNode()!=null || getNextNode()!=null
+    }
+
+    fun isLaserHead(): Boolean{
+        return getPreviousNode()==null && isPartOfLaser()
+    }
 
     init {
         calculateDelta()
@@ -152,6 +201,11 @@ open class BasicBullet(
     }
 
     override fun onGraze() {
+        //TODO Laser Graze
+        if(isPartOfLaser()){
+            return
+        }
+
         if (grazeCounter <= 0) {
             grazeCounter++
             game.graze++
@@ -161,7 +215,46 @@ open class BasicBullet(
         }
     }
 
+
+    fun drawAsLaser(batch: Batch, parentAlpha: Float, subFrameTime: Float){
+        if (batch != game.drawer.batch) {
+            game.drawer = ShapeDrawer(batch, getRegion("ui/blank.png"))
+            game.drawer.pixelSize = 0.5f
+        }
+
+        var current = this
+        val node = Array<Vector2>()
+        var totalDistance = 0f
+        while(true){
+            node.add(vec2(current.x,current.y))
+            if(current.getNextNode()==null || totalDistance>maxLength){
+                break
+            }else{
+                val next=current.getNextNode()!!
+                totalDistance += dist(current.x,current.y,next.x,next.y)
+                current=current.getNextNode()!!
+            }
+        }
+
+        game.drawer.setColor(tint)
+        game.drawer.path(node,width,true)
+        batch.draw(A.get<Texture>("player/reimuBall.png"),x-8f,y-8f,16f,16f)
+        game.addParticle(GrazeParticle(current.x, current.y))
+
+        //TODO laser enhancement
+    }
+
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
+
+        //laser render (special judge)
+        if(isLaserHead()){
+            drawAsLaser(batch,parentAlpha,subFrameTime)
+            return
+        }
+        if(isPartOfLaser()){
+            return
+        }
+
         if (!outOfFrame(x, y, boundingRadiusX, boundingRadiusY)) {
             var tmpX = x
             var tmpY = y
@@ -169,6 +262,7 @@ open class BasicBullet(
                 tmpX += deltaX * subFrameTime
                 tmpY += deltaY * subFrameTime
             }
+
             val texture = data.texture.getFrame(t)
             tmpColor.set(batch.color)
             if (t >= delay) {

@@ -33,6 +33,8 @@ import com.hhs.koto.app.Config.worldW
 import com.hhs.koto.stg.GameDifficulty
 import com.hhs.koto.stg.KotoGame
 import com.hhs.koto.stg.bullet.*
+import com.hhs.koto.stg.task.CoroutineTask
+import com.hhs.koto.stg.task.wait
 
 lateinit var game: KotoGame
 
@@ -97,6 +99,40 @@ fun create(
     delay: Int = 8,
     setRotation: Boolean = true,
 ): BasicBullet = create(defaultShotSheet[name], x, y, speed, angle, color, delay, setRotation)
+
+/**
+ * Create an All-in-one(AIO) laser
+ */
+suspend fun laser(
+    env: CoroutineTask,
+    width: Float,
+    length: Float,
+    hitPercent: Float = 0.8f,
+    maxSample: Int = 512,
+    sampleDelay: Int = 1,
+    color: Color = RED_HSV,
+    /**
+     * The task to create the laser. The given parameter is laser index. (Should not be used anyway)
+     */
+    creationTask: (Int) -> BasicBullet
+) {
+    env.attachTask(CoroutineTask {
+        var last: BasicBullet? = null
+        repeat(maxSample) {
+            val bul = creationTask(it).apply {
+                this.maxLength = length
+                this.width = width
+                this.hitRatio = hitPercent
+                this.prev = last
+                this.tint = color
+                last?.next = this
+            }
+            game.addBullet(bul)
+            wait(sampleDelay)
+            last = bul
+        }
+    })
+}
 
 fun <T : Bullet> T.setSpeed(speed: Float): T {
     this.speed = speed
