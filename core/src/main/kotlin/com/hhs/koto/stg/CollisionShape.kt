@@ -25,7 +25,13 @@
 
 package com.hhs.koto.stg
 
+import com.badlogic.gdx.math.Intersector
+import com.badlogic.gdx.math.Polygon
 import com.hhs.koto.app.Config
+import com.hhs.koto.stg.bullet.BasicBullet
+import com.hhs.koto.util.dist
+import com.hhs.koto.util.game
+import ktx.math.vec2
 
 interface CollisionShape {
     val boundingHeight: Float
@@ -78,4 +84,43 @@ class NoCollision : CollisionShape {
     override val boundingHeight = 0f
     override val boundingWidth = 0f
     override fun collide(other: CollisionShape, x1: Float, y1: Float, x2: Float, y2: Float) = false
+}
+
+class LaserCollision(val bullet: BasicBullet) : CollisionShape {
+    override val boundingHeight = 1e9f
+    override val boundingWidth = 1e9f
+
+    override fun collide(other: CollisionShape, x1: Float, y1: Float, x2: Float, y2: Float): Boolean? {
+        if (other is CircleCollision) {
+            //for simplicity, only a point is considered :3
+            val last = bullet.prev
+            val now = bullet
+            if(last!=null && bullet.laserActivated) {
+                val vec = vec2(now.x - last.x, now.y - last.y)
+                vec.rotate90(1).setLength(bullet.width * bullet.hitRatio / 2)
+                val _x1 = vec.x + last.x
+                val _y1 = vec.y + last.y
+                val _x2 = vec.x + now.x
+                val _y2 = vec.y + now.y
+
+                vec.rotateDeg(180f)
+                val x3 = vec.x + last.x
+                val y3 = vec.y + last.y
+                val x4 = vec.x + now.x
+                val y4 = vec.y + now.y
+
+                //2|==|4
+                //1|==|3
+
+                return Intersector.intersectSegmentCircle(vec2(_x1,_y1),vec2(_x2,_y2),vec2(x2,y2),other.radius*other.radius) ||
+                        Intersector.intersectSegmentCircle(vec2(_x2,_y2),vec2(x4,y4),vec2(x2,y2),other.radius*other.radius) ||
+                        Intersector.intersectSegmentCircle(vec2(x4,y4),vec2(x3,y3),vec2(x2,y2),other.radius*other.radius) ||
+                        Intersector.intersectSegmentCircle(vec2(_x1,_y1),vec2(x3,y3),vec2(x2,y2),other.radius*other.radius)
+            }
+
+            return false
+        } else {
+            throw UnsupportedOperationException("Only point is supported now")
+        }
+    }
 }

@@ -40,8 +40,8 @@ object Stage2Spell2 : BasicSpell<AyaBoss>(AyaBoss::class.java) {
     override val availableDifficulties: GdxArray<GameDifficulty> = GameDifficulty.REGULAR_AVAILABLE
 
     override val health: Float
-        get() = 1000f
-    override val maxTime: Int = 3000
+        get() = 10000f
+    override val maxTime: Int = 30000
     override val bonus: Long
         get() = defaultBonus(2)
 
@@ -52,9 +52,10 @@ object Stage2Spell2 : BasicSpell<AyaBoss>(AyaBoss::class.java) {
         while(true){
 //            for(i in 0 until 5){
             wander(boss, 60)
-
+            val tx=boss.x
+            val ty=boss.y
             laser(self,8f,150f){
-                BasicBullet(boss.x,boss.y,3f, base, defaultShotSheet["DS_BALL_M_A_BLUE"]).task {
+                BasicBullet(tx,ty,3f, base, defaultShotSheet["DS_BALL_M_A_BLUE"]).task {
                     wait(30)
                     while(true){
                         bullet.angle++

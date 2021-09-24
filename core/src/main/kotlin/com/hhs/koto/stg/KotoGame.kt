@@ -44,6 +44,7 @@ import com.hhs.koto.app.Config.worldOriginX
 import com.hhs.koto.app.Config.worldOriginY
 import com.hhs.koto.app.Config.worldW
 import com.hhs.koto.app.ui.VfxOutputDrawable
+import com.hhs.koto.stg.bullet.BasicBullet
 import com.hhs.koto.stg.bullet.Bullet
 import com.hhs.koto.stg.bullet.PlayerBullet
 import com.hhs.koto.stg.graphics.*
@@ -169,12 +170,12 @@ class KotoGame : Disposable {
     }
     var creditCount: Int = 0
     val initialLife: FragmentCounter = when (SystemFlag.gamemode!!) {
-        GameMode.SPELL_PRACTICE -> FragmentCounter(3, 0, 0, 8)
+        GameMode.SPELL_PRACTICE -> FragmentCounter(3, 100, 0, 8)
         GameMode.STAGE_PRACTICE -> FragmentCounter(3, 8, 0, 8)
         else -> FragmentCounter(3, 2, 0, 8)
     }
     val initialBomb: FragmentCounter = when (SystemFlag.gamemode!!) {
-        GameMode.SPELL_PRACTICE -> FragmentCounter(5, 0, 0, 8)
+        GameMode.SPELL_PRACTICE -> FragmentCounter(5, 100, 0, 8)
         else -> FragmentCounter(5, 3, 0, 8)
     }
     val life: FragmentCounter = initialLife.copy()
@@ -269,6 +270,44 @@ class KotoGame : Disposable {
                 )
             )
         }
+
+        //laser deactivate
+        game.bullets.forEach {
+            if(it is BasicBullet){
+                it.laserActivated=false
+            }
+        }
+        game.bullets.forEach {
+            if (it is BasicBullet && it.isLaserHead()) { //tick laser activate
+                var last: BasicBullet? = null
+                val bullet = it as BasicBullet
+                var now = bullet
+                var accumulatedDistance = 0f
+                val len = bullet.getLaserLength()
+                while (true) {
+                    if (last != null) {
+                        accumulatedDistance += dist(last.x, last.y, now.x, now.y)
+                        if (accumulatedDistance in bullet.verticalMargin..len - bullet.verticalMargin) {
+                            now.laserActivated = true
+                        }
+                    }
+                    last = now
+                    if (now.getNextNode() == null) {
+                        break
+                    } else {
+                        now = now.getNextNode()!!
+                    }
+                }
+            }
+        }
+        game.bullets.forEach {
+//            println("Trying to destroy $it with ${(it as BasicBullet).isLaserHead()} ${(it as BasicBullet).getLaserLength()} ${(it as BasicBullet).protectionFrame}")
+            if(it is BasicBullet && it.isLaserHead() && it.isMoribund() && it.protectionFrame==0){
+//                println("Destroying $it")
+                it.destroy()
+            }
+        }
+
         background.tick()
         stage.tick()
         hud.tick()

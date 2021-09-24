@@ -27,6 +27,8 @@ package com.hhs.koto.util
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
+import javafx.beans.property.FloatProperty
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 const val SQRT2 = 1.41421356237309505f
@@ -98,6 +100,18 @@ fun dist(x1: Float, y1: Float, x2: Float, y2: Float): Float {
     val deltaX = x1 - x2
     val deltaY = y1 - y2
     return sqrt(deltaX * deltaX + deltaY * deltaY)
+}
+
+/**
+ * Returns the distance from point(x1,y1) to line(x2,y2)--(x3,y3)
+ */
+fun dist(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float): Float{
+    if(x2==x3){
+        return abs(x1-x2)
+    }
+    val k=(y3-y2)/(x3-x2)
+    val b=y2-x2*k
+    return abs(x1*k+b-y1)/sqrt(k*k+1)
 }
 
 fun dist2(x1: Float, y1: Float, x2: Float, y2: Float): Float {

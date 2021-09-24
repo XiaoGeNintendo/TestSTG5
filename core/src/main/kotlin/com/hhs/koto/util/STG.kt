@@ -108,9 +108,16 @@ suspend fun laser(
     width: Float,
     length: Float,
     hitPercent: Float = 0.8f,
+    verticalMargin: Float = 10f,
     maxSample: Int = 512,
     sampleDelay: Int = 1,
     color: Color = RED_HSV,
+    /**
+     * After how many frames will this node start to be considered stable
+     *
+     * A stable node can be removed if it is moribund
+     */
+    protectionFrame: Int = 20,
     /**
      * The task to create the laser. The given parameter is laser index. (Should not be used anyway)
      */
@@ -118,18 +125,32 @@ suspend fun laser(
 ) {
     env.attachTask(CoroutineTask {
         var last: BasicBullet? = null
-        repeat(maxSample) {
+        var first: BasicBullet? = null
+        var totalDistance = 0f
+        for(it in 0 until maxSample) {
             val bul = creationTask(it).apply {
+                this.laser=true
                 this.maxLength = length
                 this.width = width
                 this.hitRatio = hitPercent
                 this.prev = last
                 this.tint = color
+                this.verticalMargin = verticalMargin
+                this.protectionFrame = protectionFrame
                 last?.next = this
             }
+            if(last==null){
+                first=bul
+            }
+
             game.addBullet(bul)
             wait(sampleDelay)
-            last = bul
+
+//            println(first!!.getLaserLength())
+            if(first!!.getLaserLength()>=length){
+                break
+            }
+            last=bul
         }
     })
 }
