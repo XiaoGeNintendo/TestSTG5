@@ -303,6 +303,12 @@ open class BasicBullet(
     override fun onGraze() {
         //TODO Laser Graze
         if (isPartOfLaser()) {
+            if(t%20==0){
+                game.graze++
+                game.pointValue = (game.pointValue + 1L).coerceAtMost(game.maxPointValue)
+                SE.play("graze")
+                game.addParticle(GrazeParticle(x, y))
+            }
             return
         }
 
