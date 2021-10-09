@@ -49,30 +49,39 @@ object Stage2Spell2 : BasicSpell<AyaBoss>(AyaBoss::class.java) {
         val boss = getBoss()
         game.stage.addDrawable(Cutin(getRegion("portrait/aya/attack.png")))
         var base = 0f
-        while(true){
+        while (true) {
 //            for(i in 0 until 5){
-            wander(boss, 60)
-            val tx=boss.x
-            val ty=boss.y
-            laser(self,8f,150f){
-                BasicBullet(tx,ty,3f, base, defaultShotSheet["DS_BALL_M_A_BLUE"]).task {
+//            wander(boss, 60)
+            val tx = boss.x
+            val ty = boss.y
+
+            val b1 = RNGBank<Int>()
+            laser(self, 1f, 150f) {
+                BasicBullet(tx, ty, 3f, base, defaultShotSheet["DS_BALL_M_A_BLUE"]).apply{destroyable=false}.task {
                     wait(30)
+                    var cnt=0
+                    var omega=0f
                     while(true){
-                        bullet.angle++
+                        cnt++
+                        bullet.angle+=omega
+                        if(cnt%10==0){
+                            omega=b1.random(cnt,-5f,5f)
+//                            omega=random(-5f,5f) NEVER USE THIS
+                        }
                         yield()
                     }
                 } as BasicBullet
             }
 
-            laser(self,8f,150f,color = BLUE_HSV){
-                BasicBullet(boss.x,boss.y,3f, base, defaultShotSheet["DS_BALL_M_A_BLUE"]).task {
-                    wait(30)
-                    while(true){
-                        bullet.angle--
-                        yield()
-                    }
-                } as BasicBullet
-            }
+//            laser(self, 8f, 150f, color = BLUE_HSV) {
+//                BasicBullet(boss.x, boss.y, 3f, base, defaultShotSheet["DS_BALL_M_A_BLUE"]).task {
+//                    wait(30)
+//                    while (true) {
+//                        bullet.angle--
+//                        yield()
+//                    }
+//                } as BasicBullet
+//            }
 //            }
 
             wait(120)

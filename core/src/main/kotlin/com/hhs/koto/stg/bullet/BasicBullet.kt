@@ -301,7 +301,6 @@ open class BasicBullet(
     }
 
     override fun onGraze() {
-        //TODO Laser Graze
         if (isPartOfLaser()) {
             if(t%20==0){
                 game.graze++
@@ -355,7 +354,7 @@ open class BasicBullet(
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
 
         //laser render (special judge)
-        if(isPartOfLaser()){
+        /*if(isPartOfLaser()){
             //laser hitbox debug
             run {
                 if (laserActivated) {
@@ -379,7 +378,7 @@ open class BasicBullet(
                     }
                 }
             }
-        }
+        }*/
 
         if (isLaserHead()) {
             drawAsLaser(batch, parentAlpha, subFrameTime)
