@@ -74,6 +74,28 @@ val playerX: Float
 val playerY: Float
     get() = game.player.y
 
+fun staticLaser(
+    data: BulletData,
+    x: Float,
+    y: Float,
+    length: Float,
+    width: Float,
+    angle: Float,
+    speed: Float = 0f,
+    color: Color = Color.WHITE,
+    delay: Int = 60,
+    headHit: Float = 0.6f,
+    widthHit: Float = 0.7f,
+    style: Int = 0,
+): StaticLaser {
+    val b = StaticLaser(x, y, length, width, delay, data, headHit, widthHit, style)
+    b.tint = color
+    b.angle = angle
+    b.speed = speed
+    game.addBullet(b)
+    return b
+}
+
 fun create(
     data: BulletData,
     x: Float,
@@ -127,9 +149,9 @@ suspend fun laser(
         var last: BasicBullet? = null
         var first: BasicBullet? = null
         var totalDistance = 0f
-        for(it in 0 until maxSample) {
+        for (it in 0 until maxSample) {
             val bul = creationTask(it).apply {
-                this.laser=true
+                this.laser = true
                 this.maxLength = length
                 this.width = width
                 this.hitRatio = hitPercent
@@ -139,18 +161,18 @@ suspend fun laser(
                 this.protectionFrame = protectionFrame
                 last?.next = this
             }
-            if(last==null){
-                first=bul
+            if (last == null) {
+                first = bul
             }
 
             game.addBullet(bul)
             wait(sampleDelay)
 
 //            println(first!!.getLaserLength())
-            if(first!!.getLaserLength()>=length){
+            if (first!!.getLaserLength() >= length) {
                 break
             }
-            last=bul
+            last = bul
         }
     })
 }

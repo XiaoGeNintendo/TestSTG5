@@ -56,7 +56,7 @@ open class BasicBullet(
     override var destroyable: Boolean = true,
     override var rotation: Float = 0f,
     override var tint: Color = NO_TINT_HSV,
-    val delay: Int = 8,
+    open val delay: Int = 8,
 ) : Bullet, Bounded {
     companion object {
         val tmpColor = Color()
