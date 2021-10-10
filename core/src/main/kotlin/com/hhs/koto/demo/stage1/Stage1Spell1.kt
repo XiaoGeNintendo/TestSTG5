@@ -57,6 +57,10 @@ object Stage1Spell1 : BasicSpell<AyaBoss>(AyaBoss::class.java) {
             cast2(boss.x,boss.y)
             wait(30)
 
+            game.shaking=100
+            wait(180)
+            game.shaking=0
+
             boss.usingAction = true
             repeat(3) {
                 ring(

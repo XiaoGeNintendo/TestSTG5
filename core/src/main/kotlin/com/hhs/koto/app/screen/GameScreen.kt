@@ -44,6 +44,7 @@ import com.hhs.koto.util.*
 import ktx.actors.alpha
 import ktx.actors.plusAssign
 import ktx.actors.then
+import java.util.*
 
 class GameScreen : BasicScreen(null, null) {
 
@@ -58,6 +59,8 @@ class GameScreen : BasicScreen(null, null) {
         st += this
     }
     var gameStatus: GameStatus? = null
+
+    var rng = Random()
 
     init {
         val gameBackground = Image(getRegion("bg/game.png"))
@@ -115,6 +118,16 @@ class GameScreen : BasicScreen(null, null) {
             }
             game.update()
         }
+        //shake game frame :3
+        if (game.shaking != 0 && !paused) {
+            gameFrame.setPosition(
+                72f + rng.nextFloat() * game.shaking * 2 - game.shaking,
+                36f + rng.nextFloat() * game.shaking * 2 - game.shaking
+            )
+        } else {
+            gameFrame.setPosition(72f, 36f)
+        }
+
         super.render(delta)
         if (!paused) {
             game.overlay.draw()

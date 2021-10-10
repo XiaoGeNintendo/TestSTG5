@@ -197,6 +197,13 @@ class KotoGame : Disposable {
      */
     var slowMode:Int = 0
 
+    /**
+     * Enable shaking??
+     * Will shake game screen with different strength
+     *
+     * Set to 0 to disable it
+     */
+    var shaking:Int = 0
     init {
         logger.info("Game instance created.")
         if (SystemFlag.replay != null) {
