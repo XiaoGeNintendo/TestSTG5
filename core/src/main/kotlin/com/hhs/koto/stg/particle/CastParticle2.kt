@@ -31,9 +31,9 @@ import com.hhs.koto.util.*
 import ktx.math.vec2
 
 /**
- * Particle displayed during boss cast
+ * Particle displayed during boss cast2 (aka. explode?)
  */
-class CastParticle(x: Float, y: Float, val tx: Float, val ty: Float) : SpriteDrawable(
+class CastParticle2(x: Float, y: Float, val tx: Float, val ty: Float) : SpriteDrawable(
     getRegion("particle/cast_particle.png"),
     x,
     y,
@@ -44,36 +44,36 @@ class CastParticle(x: Float, y: Float, val tx: Float, val ty: Float) : SpriteDra
     64f,
     64f,
     0f,
-    color = Color(1f, 1f, 1f, 0.4f)
+    color = Color(1f,1f,1f,0.9f)
 //    color = arrayOf(Color.RED, Color.GREEN, Color.YELLOW, Color.BLUE, Color.CYAN, Color.WHITE, Color.BLACK)[random(6)].cpy().apply { a=0.4f },
 ) {
 
     val iv = vec2(tx - x, ty - y)
     var omega = 0f
-    val sx = x
-    val sy = y
-
+    val sx=x
+    val sy=y
     val sz = random(0.5f, 1.5f)
 
     init {
-        sprite.setScale(sz)
-        sprite.alpha = 0f
+        sprite.setScale(0f)
     }
 
     override fun tick() {
         super.tick()
-        if (sprite.alpha < 1f) {
-            sprite.alpha = min(sprite.alpha + 0.1f, 1f)
-        } else {
-            sprite.rotation += omega
-            omega += 0.1f
 
-            x = smoothstep(sx, tx, (t - 20) / 60f)
-            y = smoothstep(sy, ty, (t - 20) / 60f)
-            sprite.setScale(smoothstep(sz, 0f, (t - 20) / 60f))
+        sprite.rotation += omega
+        omega += 0.1f
+
+        x=smoothstep(sx,tx,t/60f)
+        y=smoothstep(sy,ty,t/60f)
+
+        sprite.setScale(smoothstep(0f,sz,t/60f))
+
+        if(t>60){
+            sprite.alpha = max(sprite.alpha - 0.1f, 0f)
         }
 
-        if (t > 80) {
+        if(t>70){
             kill()
         }
     }
