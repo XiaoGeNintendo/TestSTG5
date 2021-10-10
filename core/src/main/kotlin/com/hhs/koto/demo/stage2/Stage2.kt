@@ -60,11 +60,17 @@ object Stage2 : BasicStage() {
 
         val boss = game.addBoss(AyaBoss())
         game.bossNameDisplay.show(boss, 3)
-        boss.healthBar.addSpell(Stage2Spell1,Stage2Spell2)
+
         boss.creationTask().attachAndWait()
 
+
+        boss.healthBar.startWithSpell(Stage2Spell1)
         Stage2Spell1.build().attachAndWait()
+
+        boss.healthBar.startWithSpell(Stage2Spell2)
         Stage2Spell2.build().attachAndWait()
+        
+        boss.healthBar.startWithSpell(Stage2Spell3)
         Stage2Spell3.build().attachAndWait()
 
         boss.healthBar.visible = false

@@ -62,6 +62,13 @@ class HealthBar(
     }
     val segmentDivider = getRegion("ui/segment_divider.png")
 
+    fun reset(){
+        segments.clear()
+        totalHealth=0f
+        currentHealth=0f
+        currentSegment=0
+    }
+
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
         if (visible && segments.size > 0) {
             if (batch != shapeDrawer.batch) {
@@ -116,6 +123,11 @@ class HealthBar(
             totalHealth += it.health
             segments.add(it.health)
         }
+    }
+
+    fun startWithSpell(vararg spell: BasicSpell<*>){
+        reset()
+        addSpell(*spell)
     }
 
     fun currentTotalHealth(): Float {
