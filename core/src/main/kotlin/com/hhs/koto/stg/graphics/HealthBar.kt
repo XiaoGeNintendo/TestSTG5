@@ -27,8 +27,9 @@ package com.hhs.koto.stg.graphics
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.math.MathUtils.PI
 import com.badlogic.gdx.math.MathUtils.PI2
+import com.badlogic.gdx.math.MathUtils.HALF_PI
+import com.badlogic.gdx.math.MathUtils.PI
 import com.hhs.koto.stg.Drawable
 import com.hhs.koto.stg.task.BasicSpell
 import com.hhs.koto.util.*
@@ -61,12 +62,14 @@ class HealthBar(
         pixelSize = 0.1f
     }
     val segmentDivider = getRegion("ui/segment_divider.png")
+    var animationTimer = 0
 
     fun reset(){
         segments.clear()
         totalHealth=0f
         currentHealth=0f
         currentSegment=0
+        animationTimer=0
     }
 
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
@@ -76,7 +79,11 @@ class HealthBar(
                 shapeDrawer.pixelSize = 0.5f
             }
             shapeDrawer.setColor(barColor)
-            shapeDrawer.arc(x, y, radius, PI / 2f, PI2 * currentTotalHealth() / totalHealth, 3f)
+
+            val anime = smoothstep(HALF_PI,PI2,animationTimer/30f)
+            val realDis = min(anime,PI2 * currentTotalHealth() / totalHealth)
+
+            shapeDrawer.arc(x, y, radius, PI / 2f, realDis, 3f)
             shapeDrawer.setColor(borderColor)
             shapeDrawer.circle(x, y, radius + 1.5f, 1f)
             shapeDrawer.circle(x, y, radius - 1.5f, 1f)
@@ -103,7 +110,9 @@ class HealthBar(
         }
     }
 
-    override fun tick() = Unit
+    override fun tick(){
+        animationTimer++
+    }
 
     fun addSegment(vararg health: Float) {
         if (segments.isEmpty) {
