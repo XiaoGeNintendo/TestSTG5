@@ -27,6 +27,7 @@ package com.hhs.koto.demo.stage1
 
 import com.hhs.koto.stg.GameDifficulty
 import com.hhs.koto.stg.graphics.Cutin
+import com.hhs.koto.stg.pattern.cast
 import com.hhs.koto.stg.pattern.wander
 import com.hhs.koto.stg.task.BasicSpell
 import com.hhs.koto.stg.task.CoroutineTask
@@ -49,6 +50,7 @@ object Stage1Spell1 : BasicSpell<AyaBoss>(AyaBoss::class.java) {
         game.stage.addDrawable(Cutin(getRegion("portrait/aya/attack.png")))
         repeat(20) {
             wander(boss, 120)
+            cast(boss.x,boss.y)
             wait(30)
             boss.usingAction = true
             repeat(3) {

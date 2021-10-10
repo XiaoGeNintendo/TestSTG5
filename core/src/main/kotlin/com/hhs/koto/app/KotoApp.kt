@@ -132,6 +132,7 @@ class KotoApp(val callbacks: KotoCallbacks) : ApplicationListener {
         SE.register("spellcard", "snd/se_cat00.wav")
         SE.register("bonus", "snd/se_bonus.wav")
         SE.register("extend", "snd/se_extend.wav")
+        SE.register("charge","snd/se_ch02.wav")
 
         BGM.register(LoopingMusic(bundle["music.0.file"], 2f, 58f))
         BGM.register(LoopingMusic(bundle["music.1.file"], 0f, 12f))
