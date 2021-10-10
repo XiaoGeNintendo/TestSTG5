@@ -66,6 +66,6 @@ object Stage2Spell3 : BasicSpell<AyaBoss>(AyaBoss::class.java) {
         }
     }
 
-    override fun buildSpellPractice(): Task = buildSpellPractice { AyaBoss() }
+    override fun buildSpellPractice(): Task = buildSpellPractice(1) { AyaBoss() }
 
 }

@@ -46,20 +46,30 @@ object Stage1Spell1 : BasicSpell<AyaBoss>(AyaBoss::class.java) {
     override val bonus: Long
         get() = defaultBonus(1)
 
+    override fun terminate(): Task {
+        return object : Task {
+            override var alive = true
+            override fun tick() {
+                game.shaking = 0
+                alive = false
+            }
+        }
+    }
+
     override fun spell(): Task = CoroutineTask {
         val boss = getBoss()
         game.stage.addDrawable(Cutin(getRegion("portrait/aya/attack.png")))
         repeat(20) {
             wander(boss, 120)
-            cast(boss.x,boss.y)
+            cast(boss.x, boss.y)
             wait(90)
 
-            cast2(boss.x,boss.y)
+            cast2(boss.x, boss.y)
             wait(30)
 
-            game.shaking=100
+            game.shaking = 100
             wait(180)
-            game.shaking=0
+            game.shaking = 0
 
             boss.usingAction = true
             repeat(3) {
@@ -79,5 +89,5 @@ object Stage1Spell1 : BasicSpell<AyaBoss>(AyaBoss::class.java) {
         }
     }
 
-    override fun buildSpellPractice(): Task = buildSpellPractice { AyaBoss() }
+    override fun buildSpellPractice(): Task = buildSpellPractice(3) { AyaBoss() }
 }

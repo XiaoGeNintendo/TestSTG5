@@ -138,6 +138,7 @@ class KotoApp(val callbacks: KotoCallbacks) : ApplicationListener {
         BGM.register(LoopingMusic(bundle["music.0.file"], 2f, 58f))
         BGM.register(LoopingMusic(bundle["music.1.file"], 0f, 12f))
         BGM.register(LoopingMusic(bundle["music.2.file"]))
+        BGM.register(LoopingMusic(bundle["music.3.file"]))
         defaultShotSheet = A[Config.defaultShotSheet]
 
         // TODO variants

@@ -99,10 +99,10 @@ object Stage1 : BasicStage() {
         game.bossNameDisplay.show(boss, 1)
         boss.creationTask().attachAndWait()
 
-//        Stage1Dialog1.build().attachAndWait()
+        Stage1Dialog1.build().attachAndWait()
 //
-        boss.healthBar.startWithSpell(Stage1Spell1)
-//        Nonspell1.build().attachAndWait()
+        boss.healthBar.startWithSpell(Nonspell1,Stage1Spell1)
+        Nonspell1.build().attachAndWait()
         Stage1Spell1.build().attachAndWait()
 
         boss.healthBar.visible = false
