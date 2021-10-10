@@ -189,6 +189,14 @@ class KotoGame : Disposable {
     val replay: Replay
     val inReplay: Boolean
 
+    /**
+     * Enable slow mode??
+     * Force limiting FPS to around the number you set
+     *
+     * Set to 0 to disable it
+     */
+    var slowMode:Int = 0
+
     init {
         logger.info("Game instance created.")
         if (SystemFlag.replay != null) {
@@ -312,6 +320,11 @@ class KotoGame : Disposable {
         stage.tick()
         hud.tick()
         tasks.tick()
+
+        if(slowMode!=0){
+            Thread.sleep(1000L/slowMode)
+        }
+
         frame++
     }
 

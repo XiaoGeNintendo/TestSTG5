@@ -72,7 +72,7 @@ suspend fun CoroutineScope.cast3(x: Float, y: Float, intensity:Int = 3, length: 
             if(t%10==0){
                 game.addParticle(
                     Explosion(
-                        x, y, 32f, 64f, 16f, 256f, random(0f, 360f), 15
+                        x, y, 32f, 64f, 16f, 256f, random(0f, 360f), 30
                     )
                 )
                 repeat(5) {

@@ -101,15 +101,16 @@ object Stage1 : BasicStage() {
 
 //        Stage1Dialog1.build().attachAndWait()
 //
-        boss.healthBar.addSpell(Stage1Spell1)
+        boss.healthBar.startWithSpell(Stage1Spell1)
 //        Nonspell1.build().attachAndWait()
         Stage1Spell1.build().attachAndWait()
 
         boss.healthBar.visible = false
         game.bossNameDisplay.hide()
 //        move(boss, -300f, 300f, 120)
-
+        game.slowMode=22
         cast3(boss.x,boss.y)
+        game.slowMode=0
         boss.kill()
 
         defaultBonus(1)

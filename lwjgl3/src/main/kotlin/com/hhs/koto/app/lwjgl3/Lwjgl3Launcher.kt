@@ -47,6 +47,9 @@ import java.util.*
 object Lwjgl3Launcher {
 
     @JvmStatic
+    lateinit var lwjgl: Lwjgl3Application
+
+    @JvmStatic
     fun main(args: Array<String>) {
         val optionsFile = getFile("options.json")
         val gameDataFile = getFile("game_data.json")
@@ -117,7 +120,7 @@ object Lwjgl3Launcher {
             }
         }
 
-        Lwjgl3Application(KotoApp(callbacks), getConfiguration(options))
+        lwjgl=Lwjgl3Application(KotoApp(callbacks), getConfiguration(options))
     }
 
     private fun getConfiguration(options: Options): Lwjgl3ApplicationConfiguration {
