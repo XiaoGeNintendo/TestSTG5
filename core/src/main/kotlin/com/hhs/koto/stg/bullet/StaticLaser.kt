@@ -1,16 +1,41 @@
 package com.hhs.koto.stg.bullet
 
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.math.Intersector
-import com.badlogic.gdx.math.Polygon
 import com.hhs.koto.stg.CollisionShape
 import com.hhs.koto.stg.NoCollision
 import com.hhs.koto.stg.SLCollision
 import com.hhs.koto.stg.particle.GrazeParticle
 import com.hhs.koto.util.*
-import ktx.math.minus
-import ktx.math.plus
-import ktx.math.vec2
+
+/**
+ * Remember the last collision state to avoid creating new collision shapes every frame
+ */
+class RememberedCollisionState {
+    var angle: Float = 0f
+    var length: Float = 0f
+    var laserWidth: Float = 0f
+    var headHit: Float = 0f
+    var widthHit: Float = 0f
+    var collisionShape: CollisionShape? = null
+
+    fun update(angle: Float, length: Float, laserWidth: Float, headHit: Float, widthHit: Float) {
+        this.angle = angle
+        this.length = length
+        this.laserWidth = laserWidth
+        this.headHit = headHit
+        this.widthHit = widthHit
+        this.collisionShape = SLCollision(angle, length, laserWidth, headHit, widthHit)
+    }
+
+    fun isChanged(angle: Float, length: Float, laserWidth: Float, headHit: Float, widthHit: Float): Boolean {
+        return this.angle != angle
+                || this.length != length
+                || this.laserWidth != laserWidth
+                || this.headHit != headHit
+                || this.widthHit != widthHit
+                || this.collisionShape == null
+    }
+}
 
 /**
  * Static Laser: laser that has only 1 rectangle collision
@@ -27,18 +52,37 @@ class StaticLaser(
     var headHit: Float = 0.6f,
     var widthHit: Float = 0.7f,
     /**
-     * 0 = become thicker (luaSTG style)
-     *
-     * 1 = show danger line (danmakufu style)
+     * See [LUASTG_STYLE] and [DANMAKUFU_STYLE]
      */
-    var style: Int = 0
+    var style: Int = LUASTG_STYLE,
 ) : BasicBullet(x, y, data = data, destroyable = false) {
 
+    companion object {
+        /**
+         * The laser becomes thicker over time during preparation
+         */
+        const val LUASTG_STYLE = 0
+
+        /**
+         * The laser shows an expanding danger line during preparation
+         */
+        const val DANMAKUFU_STYLE = 1
+    }
+
     override val collision: CollisionShape
-        get() = if (t >= delay) SLCollision(angle, length, laserWidth, headHit, widthHit) else NoCollision()
+        get() = if (t >= delay) getRememberedCollisionShape() else NoCollision()
+
+    private var rememberedCollisionState = RememberedCollisionState()
+    private fun getRememberedCollisionShape(): SLCollision {
+        if(rememberedCollisionState.isChanged(angle, length, laserWidth, headHit, widthHit)) {
+            rememberedCollisionState.update(angle, length, laserWidth, headHit, widthHit)
+        }
+
+        return rememberedCollisionState.collisionShape as SLCollision
+    }
 
     override fun onGraze() {
-        if(t%5==0){
+        if (t % 5 == 0) {
             game.graze++
             game.pointValue = (game.pointValue + 1L).coerceAtMost(game.maxPointValue)
             SE.play("graze")
@@ -53,7 +97,7 @@ class StaticLaser(
         bulletColor.a *= parentAlpha
         batch.color = bulletColor
 
-        if (t >= delay || style == 0) {
+        if (t >= delay || style == LUASTG_STYLE) {
 
             val scaleX = length / data.width
             val scaleY = smoothstep(0.1f, laserWidth / data.height, t * 1f / delay)
@@ -70,6 +114,8 @@ class StaticLaser(
                 angle,
             )
         } else {
+            //draw danger line
+
             game.drawer.line(
                 x,
                 y,

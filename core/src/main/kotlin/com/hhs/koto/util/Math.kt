@@ -28,7 +28,6 @@ package com.hhs.koto.util
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
-import javafx.beans.property.FloatProperty
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -139,6 +138,9 @@ fun lerp(start: Float, end: Float, a: Float): Float {
     return (end - start) * a + start
 }
 
+/**
+ * Performs smooth Hermite interpolation between 0 and 1.
+ */
 fun smoothstep(start: Float, end: Float, a: Float): Float {
     if (a < 0f) return start
     if (a > 1f) return end
