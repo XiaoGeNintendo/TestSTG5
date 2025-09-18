@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,10 +30,7 @@ import com.hhs.koto.stg.graphics.Cutin
 import com.hhs.koto.stg.pattern.cast
 import com.hhs.koto.stg.pattern.cast2
 import com.hhs.koto.stg.pattern.wander
-import com.hhs.koto.stg.task.BasicSpell
-import com.hhs.koto.stg.task.CoroutineTask
-import com.hhs.koto.stg.task.Task
-import com.hhs.koto.stg.task.wait
+import com.hhs.koto.stg.task.*
 import com.hhs.koto.util.*
 import ktx.collections.GdxArray
 

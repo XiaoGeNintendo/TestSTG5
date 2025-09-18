@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +43,7 @@ class SpellInfoDisplay(
     val targetX: Float = worldW - worldOriginX,
     val targetY: Float = worldH - worldOriginY - 25,
     var backgroundColor: Color = RED_HSV,
+    override var zIndex: Int = 200,
 ) : Drawable {
     override var alive: Boolean = true
     override var x: Float = targetX
@@ -79,7 +80,10 @@ class SpellInfoDisplay(
     var fontScale = 24f
     var alpha = 0f
     var nameAlpha = 0f
+
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
+        if (alpha < 0.001f) return
+
         val distanceAlpha = lerp(
             1f,
             lerp(

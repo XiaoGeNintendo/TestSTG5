@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -62,6 +62,8 @@ class TileBackground(
     }
 
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
+        if (color.a < 0.001f) return
+
         val tmpOffsetX = safeMod(offsetX + speedX * subFrameTime, tileWidth)
         val tmpOffsetY = safeMod(offsetY + speedY * subFrameTime, tileHeight)
         val startIndexX: Int = if (tmpOffsetX > 0f) {

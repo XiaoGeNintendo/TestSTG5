@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 
 package com.hhs.koto.util
 
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import javafx.beans.property.FloatProperty
@@ -138,7 +139,6 @@ fun lerp(start: Float, end: Float, a: Float): Float {
     return (end - start) * a + start
 }
 
-
 fun smoothstep(start: Float, end: Float, a: Float): Float {
     if (a < 0f) return start
     if (a > 1f) return end
@@ -160,6 +160,14 @@ fun Rectangle.distanceTo(x: Float, y: Float): Float {
     val deltaX = max(this.x - x, 0f, x - this.x - width)
     val deltaY = max(this.y - y, 0f, y - this.y - height)
     return sqrt(deltaX * deltaX + deltaY * deltaY)
+}
+
+fun completeInterpolation(interpolation: Interpolation, start: Float, end: Float, t: Int, duration: Int): Float {
+    return if (t + 1 >= duration) {
+        end
+    } else {
+        interpolation.apply(start, end, (t + 1).toFloat() / duration)
+    }
 }
 
 // TODO docs

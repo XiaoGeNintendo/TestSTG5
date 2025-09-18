@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ class TextNotification(
     fontSize: Int = 48,
     font: String = bundle["font.notification"],
     val duration: Int = 60,
-    override val zIndex: Int = 1000,
+    override val zIndex: Int = 5000,
 ) : TextDrawable(
     getFont(fontSize, font),
     0.5f,

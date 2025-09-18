@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -105,7 +105,7 @@ class StageSelectScreen : BasicScreen(Config.uiBgm, getRegion(Config.uiBackgroun
                                             0.5f,
                                         ),
                                         moveTo(
-                                            0f, y - grid.targetY - 7.5f,
+                                            0f, y - grid.targetY + 1f,
                                             1f,
                                             Interpolation.pow5Out,
                                         ),
@@ -118,7 +118,7 @@ class StageSelectScreen : BasicScreen(Config.uiBgm, getRegion(Config.uiBackgroun
             grid.arrange(0f, 1000f, 0f, -60f)
             grid.selectFirst()
             grid.finishAnimation()
-            selectionBackground.setPosition(0f, (grid[0] as Actor).y - grid.targetY - 7.5f)
+            selectionBackground.setPosition(0f, (grid[0] as Actor).y - grid.targetY + 1f)
         } else {
             selectionBackground.alpha = 0f
         }

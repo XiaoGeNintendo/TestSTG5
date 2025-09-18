@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +48,7 @@ open class TextDrawable(
     override fun tick() = Unit
 
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
+        if (color.a < 0.001f) return
         font.draw(batch, parentAlpha, text, fontScale, x, y, color, targetWidth, halign, false)
     }
 }

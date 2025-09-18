@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -70,6 +70,8 @@ open class BasicEnemy(
     override var alive: Boolean = true
 
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
+        if (color.a < 0.001f) return
+
         val tmpColor = batch.color.cpy()
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha)
 
@@ -79,28 +81,18 @@ open class BasicEnemy(
             scaleX
         }
 
-        if (rotation != 0f || tmpScaleX != 1f || scaleY != 1f) {
-            batch.draw(
-                texture.texture,
-                x - textureOriginX,
-                y - textureOriginY,
-                textureOriginX,
-                textureOriginY,
-                width,
-                height,
-                tmpScaleX,
-                scaleY,
-                rotation,
-            )
-        } else {
-            batch.draw(
-                texture.texture,
-                x - textureOriginX,
-                y - textureOriginY,
-                width,
-                height,
-            )
-        }
+        batch.draw(
+            texture.texture,
+            x - textureOriginX,
+            y - textureOriginY,
+            textureOriginX,
+            textureOriginY,
+            width,
+            height,
+            tmpScaleX,
+            scaleY,
+            rotation,
+        )
         batch.color = tmpColor
     }
 

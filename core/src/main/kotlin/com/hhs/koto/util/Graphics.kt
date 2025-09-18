@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,11 +27,13 @@ package com.hhs.koto.util
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Graphics
+import com.badlogic.gdx.Graphics.DisplayMode
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.math.MathUtils.ceil
 import com.badlogic.gdx.utils.Align
 import com.crashinvaders.vfx.VfxManager
 import com.crashinvaders.vfx.effects.ChainVfxEffect
@@ -39,16 +41,24 @@ import com.hhs.koto.app.Config
 import com.hhs.koto.app.Options
 import ktx.collections.GdxSet
 import ktx.graphics.copy
+import kotlin.math.roundToInt
 
 data class ResolutionMode(
     val windowWidth: Int,
-    val windowHeight: Int = windowWidth / 4 * 3,
-    val frameWidth: Int = windowWidth / 5 * 3,
-    val frameHeight: Int = windowWidth / 10 * 7,
+    val windowHeight: Int,
+    val frameBufferWidth: Int,
+    val frameBufferHeight: Int,
     val name: String = "${windowWidth}x${windowHeight}",
 ) {
+    constructor(windowHeight: Int) : this(
+        (windowHeight / Config.screenHeight * Config.screenWidth).roundToInt(),
+        windowHeight,
+        (windowHeight / Config.screenHeight * Config.frameWidth).roundToInt(),
+        (windowHeight / Config.screenHeight * Config.frameHeight).roundToInt(),
+    )
+
     companion object {
-        fun findOptimalIndex(displayMode: Graphics.DisplayMode): Int {
+        fun findOptimalIndex(displayMode: DisplayMode): Int {
             var modeIndex = Config.resolutionModes.indexOfLast {
                 it.windowWidth <= displayMode.width && it.windowHeight <= displayMode.height - 100
             }
@@ -56,24 +66,24 @@ data class ResolutionMode(
             return modeIndex
         }
 
-        fun findOptimal(displayMode: Graphics.DisplayMode): ResolutionMode =
+        fun findOptimal(displayMode: DisplayMode): ResolutionMode =
             Config.resolutionModes[findOptimalIndex(displayMode)]
     }
 
-    fun apply(options: Options) {
+    fun saveTo(options: Options) {
         options.windowWidth = windowWidth
         options.windowHeight = windowHeight
-        options.frameWidth = frameWidth
-        options.frameHeight = frameHeight
+        options.frameBufferWidth = frameBufferWidth
+        options.frameBufferHeight = frameBufferHeight
     }
 }
 
 data class BlendingMode(
-    val srcRGB: Int,
-    val dstRGB: Int,
+    val srcColor: Int,
+    val dstColor: Int,
     val srcAlpha: Int,
     val dstAlpha: Int,
-    val equationRGB: Int,
+    val equationColor: Int,
     val equationAlpha: Int,
 ) {
     companion object {
@@ -90,16 +100,26 @@ data class BlendingMode(
             "SUBTRACT", "DANMAKUFU_SUBTRACT" -> SUBTRACT
             "DANMAKUFU_SHADOW" -> BlendingMode(GL20.GL_ZERO, GL20.GL_ONE_MINUS_SRC_COLOR)
             "DANMAKUFU_INV_DESTRGB" -> BlendingMode(GL20.GL_ONE_MINUS_DST_COLOR, GL20.GL_ONE_MINUS_SRC_COLOR)
-            else -> ALPHA
+            else -> throw KotoRuntimeException("Unsupported blend mode: $blendingString")
         }
     }
 
-    constructor(src: Int, dst: Int, equation: Int = GL20.GL_FUNC_ADD) : this(src, dst, src, dst, equation, equation)
+    constructor(src: Int, dst: Int, equation: Int = GL20.GL_FUNC_ADD) : this(
+        src,
+        dst,
+        GL20.GL_ONE,
+        GL20.GL_ONE,
+        equation,
+        GL20.GL_FUNC_ADD,
+    )
 }
 
-fun Batch.setBlending(blending: BlendingMode) {
-    setBlendFunctionSeparate(blending.srcRGB, blending.dstRGB, blending.srcAlpha, blending.dstAlpha)
-    Gdx.gl.glBlendEquationSeparate(blending.equationRGB, blending.equationAlpha)
+fun Batch.setBlending(blending: BlendingMode, immediately: Boolean = false) {
+    setBlendFunctionSeparate(blending.srcColor, blending.dstColor, blending.srcAlpha, blending.dstAlpha)
+    Gdx.gl.glBlendEquationSeparate(blending.equationColor, blending.equationAlpha)
+    if (immediately) {
+        Gdx.gl.glBlendFuncSeparate(blending.srcColor, blending.dstColor, blending.srcAlpha, blending.dstAlpha)
+    }
 }
 
 operator fun Color.plus(other: Color): Color = this.copy().add(other)
@@ -216,3 +236,11 @@ fun disposeRegisteredEffects() {
     }
     registeredEffects.clear()
 }
+
+fun getTrueFPSMultiplier(fpsMultiplier: Int): Float {
+    if (fpsMultiplier == 0) return 1f
+    if (fpsMultiplier < 0) return 1f / -fpsMultiplier
+    return fpsMultiplier.toFloat()
+}
+
+fun safeDeltaTime() = clamp(Gdx.graphics.deltaTime, 0f, 0.1f)

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -167,15 +167,6 @@ enum class VK {
         override fun checkController(controller: Controller): Boolean {
             if (controller.getButton(controller.mapping.buttonL1)) return true
             if (controller.getButton(controller.mapping.buttonL2)) return true
-            return false
-        }
-    },
-    FULL_SCREEN {
-        override val uiKeycode: Int = Input.Keys.F4
-        override val keycodes
-            get() = options.keyFullScreen
-
-        override fun checkController(controller: Controller): Boolean {
             return false
         }
     },

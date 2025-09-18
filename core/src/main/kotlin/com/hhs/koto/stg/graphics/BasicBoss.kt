@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -116,7 +116,6 @@ abstract class BasicBoss(
         }
 
         magicCircle.tick()
-        spellAttackCircle.tick()
         if (x >= -worldOriginX && x <= worldW - worldOriginX) {
             marker.setPosition((x + worldOriginX) / worldW * 864f + 36f, 0f)
             var tmpAlpha = 1f
@@ -144,32 +143,21 @@ abstract class BasicBoss(
 
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
         magicCircle.draw(batch, parentAlpha, x, y)
-        spellAttackCircle.draw(batch, parentAlpha, subFrameTime)
 
         val tmpColor = batch.color.cpy()
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha)
-        if (rotation != 0f || scaleX != 1f || scaleY != 1f) {
-            batch.draw(
-                texture,
-                x - textureOriginX,
-                y - textureOriginY,
-                textureOriginX,
-                textureOriginY,
-                width,
-                height,
-                scaleX,
-                scaleY,
-                rotation,
-            )
-        } else {
-            batch.draw(
-                texture,
-                x - textureOriginX,
-                y - textureOriginY,
-                width,
-                height,
-            )
-        }
+        batch.draw(
+            texture,
+            x - textureOriginX,
+            y - textureOriginY,
+            textureOriginX,
+            textureOriginY,
+            width,
+            height,
+            scaleX,
+            scaleY,
+            rotation,
+        )
         batch.color = tmpColor
     }
 
@@ -188,7 +176,7 @@ abstract class BasicBoss(
 
     override fun destroy() {
         // TODO boss death animation
-        // TODO play boss death SE "dossdead"
+        // TODO play boss death SE "bossdead"
     }
 
     override fun kill(): Boolean {

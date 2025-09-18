@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,15 +25,17 @@
 
 package com.hhs.koto.app.ui
 
-import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.Texture.TextureFilter
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.crashinvaders.vfx.VfxManager
-import com.hhs.koto.stg.Drawable
 
-class VfxOutput(val useLinearFilter: Boolean = true) : Image() {
+class VfxOutput(
+    private val minFilter: TextureFilter = TextureFilter.Linear,
+    private val magFilter: TextureFilter = TextureFilter.Linear,
+) : Image() {
     constructor(vfxManager: VfxManager) : this() {
         this.vfxManager = vfxManager
     }
@@ -50,45 +52,9 @@ class VfxOutput(val useLinearFilter: Boolean = true) : Image() {
         if (vfxManager.resultBuffer == null) return
         vfxOutput.region.setRegion(vfxManager.resultBuffer.texture)
         vfxOutput.region.flip(false, true)
-        if (useLinearFilter && vfxOutput.region.texture.magFilter != Texture.TextureFilter.Linear) {
-            vfxOutput.region.texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Linear)
+        if (vfxOutput.region.texture.minFilter != minFilter || vfxOutput.region.texture.magFilter != magFilter) {
+            vfxOutput.region.texture.setFilter(minFilter, magFilter)
         }
         super.draw(batch, parentAlpha)
     }
-}
-
-class VfxOutputDrawable(
-    override var x: Float = 0f,
-    override var y: Float = 0f,
-    val width: Float,
-    val height: Float,
-    override val zIndex: Int = Int.MIN_VALUE,
-) : Drawable {
-    constructor(
-        vfxManager: VfxManager,
-        x: Float = 0f,
-        y: Float = 0f,
-        width: Float,
-        height: Float,
-        zIndex: Int = Int.MIN_VALUE,
-    ) : this(x, y, width, height, zIndex) {
-        this.vfxManager = vfxManager
-    }
-
-    override var alive: Boolean = true
-    private val vfxOutput = TextureRegion()
-
-    lateinit var vfxManager: VfxManager
-
-    override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
-        if (vfxManager.resultBuffer == null) return
-        vfxOutput.setRegion(vfxManager.resultBuffer.texture)
-        vfxOutput.flip(false, true)
-        val tmpColor = batch.color.cpy()
-        batch.setColor(1f, 1f, 1f, parentAlpha)
-        batch.draw(vfxOutput, x, y, width, height)
-        batch.color = tmpColor
-    }
-
-    override fun tick() = Unit
 }

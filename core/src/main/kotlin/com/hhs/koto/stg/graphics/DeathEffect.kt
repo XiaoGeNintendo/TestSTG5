@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,8 +32,6 @@ import com.crashinvaders.vfx.effects.ChainVfxEffect
 import com.crashinvaders.vfx.effects.ShaderVfxEffect
 import com.crashinvaders.vfx.framebuffer.VfxPingPongWrapper
 import com.hhs.koto.app.Config.worldH
-import com.hhs.koto.app.Config.worldOriginX
-import com.hhs.koto.app.Config.worldOriginY
 import com.hhs.koto.app.Config.worldW
 import com.hhs.koto.util.A
 
@@ -60,8 +58,8 @@ class DeathEffect : ShaderVfxEffect(
         program.bind()
         program.setUniformf(
             "u_playerPosition",
-            playerPositionX + worldOriginX,
-            playerPositionY + worldOriginY,
+            playerPositionX + worldW / 2,
+            playerPositionY + worldH / 2,
         )
     }
 

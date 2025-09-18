@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,7 @@ class CreditScreen : BasicScreen(2, getRegion("bg/credit.png")) {
             bundle["ui.credit.title"],
             Label.LabelStyle(getFont(120, bundle["font.title"]), WHITE_HSV),
         ).apply {
-            setBounds(0f, 0f, 1400f, 100f)
+            setBounds(0f, 0f, 1440f, 120f)
             setAlignment(Align.center)
         })
         creditGroup.addActor(Label(bundle["ui.credit.text1"], subtitleStyle).apply {
@@ -102,7 +102,7 @@ class CreditScreen : BasicScreen(2, getRegion("bg/credit.png")) {
         super.fadeIn(oldScreen, duration)
         nextDream.setPosition(0f, -1500f)
         nextDream.clearActions()
-        nextDream.addAction(moveBy(0f, 1920f, 24f))
+        nextDream.addAction(moveBy(0f, 2000f, 24f))
 
         creditGroup.setPosition(0f, -200f)
         creditGroup.clearActions()

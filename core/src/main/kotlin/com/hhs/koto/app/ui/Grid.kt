@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -359,14 +359,8 @@ open class Grid(
     operator fun get(i: Int) = getChild(i) as GridComponent
 }
 
-fun <T : Grid> T.register(st: Stage? = null, input: InputMultiplexer? = null): T {
-    st?.addActor(this)
-    input?.addProcessor(this)
-    return this
-}
-
-fun <T : Grid> T.register(group: Group? = null, input: InputMultiplexer? = null): T {
-    group?.addActor(this)
+fun <T : Grid> T.register(st: Stage, input: InputMultiplexer? = null): T {
+    st.addActor(this)
     input?.addProcessor(this)
     return this
 }

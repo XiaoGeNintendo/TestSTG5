@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,6 +74,8 @@ class MagicCircle(
     }
 
     fun draw(batch: Batch, parentAlpha: Float, x: Float, y: Float) {
+        if (color.a < 0.001f) return
+
         val tmpColor = color.cpy()
         color.a *= parentAlpha
         vertices[Batch.C1] = tmpColor.toFloatBits()
@@ -84,22 +86,22 @@ class MagicCircle(
         batch.setBlending(BlendingMode.ADD)
 
         tmpVector.set(-size / 2f, -size / 2f, 0f)
-        camera.project(tmpVector, -worldOriginX, -worldOriginY, worldW, worldH)
+        camera.project(tmpVector, -worldW/2f, -worldH/2f, worldW, worldH)
         vertices[Batch.X1] = tmpVector.x + x
         vertices[Batch.Y1] = tmpVector.y + y
 
         tmpVector.set(-size / 2f, size / 2f, 0f)
-        camera.project(tmpVector, -worldOriginX, -worldOriginY, worldW, worldH)
+        camera.project(tmpVector, -worldW/2f, -worldH/2f, worldW, worldH)
         vertices[Batch.X2] = tmpVector.x + x
         vertices[Batch.Y2] = tmpVector.y + y
 
         tmpVector.set(size / 2f, size / 2f, 0f)
-        camera.project(tmpVector, -worldOriginX, -worldOriginY, worldW, worldH)
+        camera.project(tmpVector, -worldW/2f, -worldH/2f, worldW, worldH)
         vertices[Batch.X3] = tmpVector.x + x
         vertices[Batch.Y3] = tmpVector.y + y
 
         tmpVector.set(size / 2f, -size / 2f, 0f)
-        camera.project(tmpVector, -worldOriginX, -worldOriginY, worldW, worldH)
+        camera.project(tmpVector, -worldW/2f, -worldH/2f, worldW, worldH)
         vertices[Batch.X4] = tmpVector.x + x
         vertices[Batch.Y4] = tmpVector.y + y
 

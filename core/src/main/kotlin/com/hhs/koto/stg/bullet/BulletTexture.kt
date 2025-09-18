@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@ class BulletTexture(atlas: TextureAtlas, name: String, frames: Array<Int>) {
     }
 
     fun getFrame(frame: Int): TextureRegion {
-        val tmp = frame % frameTime[frameTime.size - 1]
+        val tmp = frame % frameTime.last()
         for (i in 0 until frameTime.size) {
             if (tmp < frameTime[i]) {
                 return frames[i]

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,12 +30,12 @@ import com.hhs.koto.stg.bullet.BulletGroup
 import com.hhs.koto.util.cos
 import com.hhs.koto.util.sin
 
-class PolarAcceleration(
+class PolarAccelerate(
     bullet: Bullet,
     accSpeed: Float,
     accAngle: Float,
     duration: Int = Int.MAX_VALUE,
-) : CartesianAcceleration(bullet, cos(accAngle) * accSpeed, sin(accAngle) * accSpeed, duration) {
+) : CartesianAccelerate(bullet, cos(accAngle) * accSpeed, sin(accAngle) * accSpeed, duration) {
     var accAngle: Float = accAngle
         set(value) {
             field = value
@@ -53,14 +53,14 @@ class PolarAcceleration(
     }
 }
 
-fun <T : Bullet> T.polarAcceleration(accSpeed: Float, accAngle: Float, duration: Int = Int.MAX_VALUE): T {
-    attachTask(PolarAcceleration(this, accSpeed, accAngle, duration))
+fun <T : Bullet> T.polarAccelerate(accSpeed: Float, accAngle: Float, duration: Int = Int.MAX_VALUE): T {
+    attachTask(PolarAccelerate(this, accSpeed, accAngle, duration))
     return this
 }
 
-fun BulletGroup.polarAcceleration(accSpeed: Float, accAngle: Float, duration: Int = Int.MAX_VALUE): BulletGroup {
+fun BulletGroup.polarAccelerate(accSpeed: Float, accAngle: Float, duration: Int = Int.MAX_VALUE): BulletGroup {
     forEach {
-        it.attachTask(PolarAcceleration(it, accSpeed, accAngle, duration))
+        it.attachTask(PolarAccelerate(it, accSpeed, accAngle, duration))
     }
     return this
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ import com.hhs.koto.stg.Drawable
 import com.hhs.koto.util.*
 
 class BossNameDisplay(
-    override val zIndex: Int = 0,
+    override val zIndex: Int = 300,
 ) : Drawable {
     override var alive: Boolean = true
     override var x: Float = -worldOriginX + 6
@@ -75,10 +75,14 @@ class BossNameDisplay(
     }
 
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
-        font.draw(batch, textAlpha * parentAlpha, bossName, 10f / 20, x, y + 24, textColor)
-        repeat(spellCount) {
-            star.setPosition(x + it * 12, y)
-            star.draw(batch, parentAlpha)
+        if (textAlpha >= 0.001f) {
+            font.draw(batch, textAlpha * parentAlpha, bossName, 10f / 20, x, y + 24, textColor)
+        }
+        if (star.alpha >= 0.0001f) {
+            repeat(spellCount) {
+                star.setPosition(x + it * 12, y)
+                star.draw(batch, parentAlpha)
+            }
         }
     }
 

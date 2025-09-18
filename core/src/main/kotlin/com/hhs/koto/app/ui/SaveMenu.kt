@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -76,7 +76,7 @@ class SaveMenu(
     }
 
     var text = ""
-    private val keyboardGrid = Grid().register(this)
+    private val keyboardGrid = Grid().apply { this@SaveMenu += this }
     private val textLabel = Label("", getUILabelStyle(36)).apply {
         setBounds(10f, 100f, 500f, 50f)
         addActor(this)

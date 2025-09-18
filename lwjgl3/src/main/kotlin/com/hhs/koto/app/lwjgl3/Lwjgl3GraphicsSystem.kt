@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,37 +23,29 @@
  *
  */
 
-package com.hhs.koto.stg.pattern
+package com.hhs.koto.app.lwjgl3
 
-import com.hhs.koto.stg.bullet.Bullet
-import com.hhs.koto.stg.bullet.BulletGroup
-import com.hhs.koto.util.atan2
-import com.hhs.koto.util.cos
-import com.hhs.koto.util.len
-import com.hhs.koto.util.sin
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics
+import com.hhs.koto.app.NativeGraphicsSystem
+import org.lwjgl.glfw.GLFW
 
-open class CartesianAcceleration(
-    val bullet: Bullet,
-    var deltaX: Float,
-    var deltaY: Float,
-    duration: Int = Int.MAX_VALUE
-) : TemporalPattern(duration) {
-    override fun action() {
-        val deltaX = cos(bullet.angle) * bullet.speed + deltaX
-        val deltaY = sin(bullet.angle) * bullet.speed + deltaY
-        bullet.angle = atan2(deltaY, deltaX)
-        bullet.speed = len(deltaX, deltaY)
+class Lwjgl3GraphicsSystem : NativeGraphicsSystem {
+    override val borderlessAvailable: Boolean
+        get() = true
+
+    override fun setBorderless(): Pair<Int, Int> {
+        // prevents incorrect desktop size caused by fullscreen
+        if (Gdx.graphics.isFullscreen) {
+            Gdx.graphics.setWindowedMode(100, 100)
+        }
+
+        val mode = Gdx.graphics.displayMode
+        val window = (Gdx.graphics as Lwjgl3Graphics).window
+        val monitor = Gdx.graphics.monitor
+        Gdx.graphics.setWindowedMode(mode.width, mode.height)
+        Gdx.graphics.setUndecorated(true)
+        GLFW.glfwSetWindowPos(window.windowHandle, monitor.virtualX, monitor.virtualY)
+        return mode.width to mode.height
     }
-}
-
-fun <T : Bullet> T.cartesianAcceleration(deltaX: Float, deltaY: Float, duration: Int = Int.MAX_VALUE): T {
-    attachTask(CartesianAcceleration(this, deltaX, deltaY, duration))
-    return this
-}
-
-fun BulletGroup.cartesianAcceleration(deltaX: Float, deltaY: Float, duration: Int = Int.MAX_VALUE): BulletGroup {
-    forEach {
-        it.attachTask(CartesianAcceleration(it, deltaX, deltaY, duration))
-    }
-    return this
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,18 +30,21 @@ import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.hide
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.show
 import com.hhs.koto.app.screen.GameScreen
 import com.hhs.koto.stg.GameState
 import com.hhs.koto.util.SystemFlag
 import com.hhs.koto.util.bundle
 import com.hhs.koto.util.game
 import ktx.actors.alpha
+import ktx.actors.then
 
 
 class PauseMenu(val screen: GameScreen, val st: Stage, val input: InputMultiplexer) : Group() {
 
     // confirmationMenu must be registered before pauseMenu!!
-    private val confirmationMenu = ConfirmationMenu(staticX = 680f, staticY = 450f).register(st, input).apply {
+    val confirmationMenu = ConfirmationMenu(staticX = 680f, staticY = 450f).register(st, input).apply {
         alpha = 0f
         deactivate()
         noRunnable = {
@@ -50,24 +53,24 @@ class PauseMenu(val screen: GameScreen, val st: Stage, val input: InputMultiplex
         }
         exitRunnable = noRunnable
     }
-    private val pauseMenu = Grid(staticX = 150f, staticY = 400f).register(st, input).apply {
+    val pauseMenu = Grid(staticX = 150f, staticY = 400f).register(st, input).apply {
         alpha = 0f
         deactivate()
         activeAction = {
             setPosition(staticX - 200f, staticY)
             Actions.parallel(
-                Actions.fadeIn(0.5f, Interpolation.pow5Out),
+                show() then Actions.fadeIn(0.5f, Interpolation.pow5Out),
                 Actions.moveTo(staticX, staticY, 0.5f, Interpolation.pow5Out),
             )
         }
         inactiveAction = {
             Actions.parallel(
-                Actions.fadeOut(0.5f, Interpolation.pow5Out),
+                Actions.fadeOut(0.5f, Interpolation.pow5Out) then hide(),
                 Actions.moveTo(staticX - 200f, staticY, 0.5f, Interpolation.pow5Out),
             )
         }
     }
-    private val saveMenu = SaveMenu(st, input, 240f, 400f) {
+    val saveMenu = SaveMenu(st, input, 240f, 400f) {
         pauseMenu.activate()
     }
 
@@ -99,8 +102,7 @@ class PauseMenu(val screen: GameScreen, val st: Stage, val input: InputMultiplex
             confirmationMenu.selectLast()
             input.removeProcessor(pauseMenu)
             confirmationMenu.yesRunnable = {
-                confirmationMenu.deactivate()
-                screen.retryGame()
+                if (screen.retryGame()) confirmationMenu.deactivate()
             }
         })
         pauseMenu.add(GridButton(bundle["ui.game.pauseMenu.quit"], 36, gridX = 0, gridY = 4) {

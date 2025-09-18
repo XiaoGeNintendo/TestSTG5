@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ package com.hhs.koto.stg.pattern
 import com.badlogic.gdx.math.Interpolation
 import com.hhs.koto.stg.task.self
 import com.hhs.koto.stg.task.waitForFinish
+import com.hhs.koto.util.completeInterpolation
 import kotlinx.coroutines.CoroutineScope
 
 class Interpolate(
@@ -38,7 +39,7 @@ class Interpolate(
     val action: (Float) -> Unit,
 ) : TemporalPattern(duration) {
     override fun action() {
-        action(interpolation.apply(start, end, t.toFloat() / duration))
+        action(completeInterpolation(interpolation, start, end, t, duration))
     }
 }
 

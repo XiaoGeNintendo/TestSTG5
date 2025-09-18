@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -154,7 +154,7 @@ abstract class BasicSpell<T : Boss>(protected val bossClass: Class<T>) : SpellBu
             game.replay.stage = name
         }
         game.resetPlayer()
-        game.replay.createCheckpoint(game, name)
+        if (SystemFlag.replay == null) game.replay.createCheckpoint(game, name)
 
         BGM.play(musicID, true)
         game.hud.addDrawable(BGMNameDisplay(musicID))
@@ -167,7 +167,6 @@ abstract class BasicSpell<T : Boss>(protected val bossClass: Class<T>) : SpellBu
         this@BasicSpell.build().attachAndWait()
         game.bossNameDisplay.hide()
         boss.healthBar.visible = false
-        wait(60)
         game.end()
         if (SystemFlag.replay == null) {
             gameData.currentElement.spell[name].highScore =

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,11 +50,15 @@ class TitleScreen : BasicScreen(Config.uiBgm, getRegion("bg/title.png")) {
         titles += this
     }
     private val subtitle = Label(
-        "by Hell Hole Studios 2021",
+        "by Hell Hole Studios 2021-2022",
         LabelStyle(getFont(40, bundle["font.subtitle"], borderColor = null), BLACK_HSV),
     ).apply {
         setPosition(100f, 820f)
         titles += this
+    }
+    private val versionLabel = Label("ver.alpha 26", getUILabelStyle(28)).apply {
+        setPosition(10f, 10f)
+        st += this
     }
 
     init {
@@ -101,6 +105,9 @@ class TitleScreen : BasicScreen(Config.uiBgm, getRegion("bg/title.png")) {
         titles.clearActions()
         titles.setPosition(0f, 400f)
         titles.addAction(moveTo(0f, 0f, duration, Interpolation.pow5Out))
+        versionLabel.setPosition(10f, -60f)
+        versionLabel.clearActions()
+        versionLabel.addAction(moveTo(10f, 10f, duration, Interpolation.pow5Out))
 
         var extraEnabled = false
         gameData.data.safeValues().forEach {
@@ -115,9 +122,11 @@ class TitleScreen : BasicScreen(Config.uiBgm, getRegion("bg/title.png")) {
     override fun fadeOut(newScreen: KotoScreen?, duration: Float) {
         super.fadeOut(newScreen, duration)
         grid.clearActions()
-        grid.addAction(moveTo(grid.staticX + 400f, grid.staticY, duration, Interpolation.sineOut))
+        grid.addAction(moveTo(grid.staticX + 400f, grid.staticY, duration, Interpolation.pow5Out))
         titles.clearActions()
-        titles.addAction(moveTo(0f, 400f, duration, Interpolation.sineOut))
+        titles.addAction(moveTo(0f, 400f, duration, Interpolation.pow5Out))
+        versionLabel.clearActions()
+        versionLabel.addAction(moveTo(10f, -60f, duration, Interpolation.pow5Out))
     }
 
     override fun onQuit() {

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@ import com.badlogic.gdx.math.Interpolation
 import com.hhs.koto.stg.Movable
 import com.hhs.koto.stg.task.self
 import com.hhs.koto.stg.task.waitForFinish
+import com.hhs.koto.util.completeInterpolation
 import com.hhs.koto.util.dist
 import com.hhs.koto.util.random
 import kotlinx.coroutines.CoroutineScope
@@ -43,8 +44,8 @@ class Move(
     val startX: Float = target.x
     val startY: Float = target.y
     override fun action() {
-        target.x = interpolation.apply(startX, targetX, t.toFloat() / duration)
-        target.y = interpolation.apply(startY, targetY, t.toFloat() / duration)
+        target.x = completeInterpolation(interpolation, startX, targetX, t, duration)
+        target.y = completeInterpolation(interpolation, startY, targetY, t, duration)
     }
 }
 

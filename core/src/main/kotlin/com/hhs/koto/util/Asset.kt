@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,10 +46,7 @@ import com.hhs.koto.stg.bullet.ShotSheet
 import com.hhs.koto.stg.bullet.ShotSheetLoader
 import ktx.assets.TextAssetLoader
 import ktx.assets.load
-import ktx.collections.GdxArray
-import ktx.collections.GdxMap
-import ktx.collections.GdxSet
-import ktx.collections.contains
+import ktx.collections.*
 import ktx.freetype.registerFreeTypeFontLoaders
 import ktx.json.fromJson
 import kotlin.math.nextUp
@@ -70,7 +67,9 @@ fun initAsset() {
     A.registerFreeTypeFontLoaders()
     A.logger.level = Config.logLevel
     val tmpCharset = GdxSet<Char>()
-    (FreeTypeFontGenerator.DEFAULT_CHARS + "\u2423\u21e6").forEach {
+    val defaultChars =
+        "\u0000ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890\"!`?'.,;:()[]{}<>|/@\\^\$€-%+=#_&~*\u007F\u2423\u21e6"
+    defaultChars.forEach {
         tmpCharset.add(it)
     }
     options.locales.forEach {
@@ -89,7 +88,7 @@ fun initAsset() {
         charset += it
     }
     // this seems to fix FreeTypeFontGenerator glitch
-    packer = PixmapPacker(1024, 1024, Pixmap.Format.RGBA8888, 1, false)
+    packer = PixmapPacker(2048, 2048, Pixmap.Format.RGBA8888, 1, false)
 }
 
 fun disposeAsset() {
@@ -289,7 +288,7 @@ fun loadAssetIndex(file: FileHandle) {
 
 fun loadSmart(fileName: String) {
     with(A) {
-        when (fileHandleResolver.resolve(fileName).extension()) {
+        when (fileHandleResolver.resolve(fileName).extension().lowercase()) {
             "png", "jpg", "jpeg", "bmp", "gif" -> load<Texture>(fileName, defaultTextureParameter())
             "wav" -> load<Sound>(fileName)
             "mp3", "ogg" -> load<Music>(fileName)

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 
 package com.hhs.koto.stg.graphics
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
@@ -42,10 +43,13 @@ class SpellAttackCircle(
     val boss: Boss,
     val maxSize: Float = 128f,
     val setupTime: Int = 60,
+    override val zIndex: Int = 800,
 ) : Drawable {
+    override val blending: BlendingMode
+        get() = BlendingMode.ADD
     override var x = 0f
     override var y = 0f
-    override var alive = boss.alive
+    override var alive = true
 
     var visible = false
     var size = 0f
@@ -129,6 +133,11 @@ class SpellAttackCircle(
     }
 
     override fun tick() {
+        if (!boss.alive) {
+            alive = false
+            return
+        }
+
         val a = vec2(boss.x - x, boss.y - y).limit(3f)
         x += a.x
         y += a.y
@@ -168,9 +177,8 @@ class SpellAttackCircle(
     }
 
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
-        if (!visible) {
-            return
-        }
+        if (!visible) return
+
         batch.flush()
         texture.texture.bind()
         for (i in 0 until vertexCount + 1) {
@@ -181,8 +189,7 @@ class SpellAttackCircle(
             vertices[i * 10 + 6] = y + size * sin(angle)
         }
         mesh.setVertices(vertices)
-        batch.setBlending(BlendingMode.ADD)
+        batch.setBlending(BlendingMode.ADD, immediately = true)
         mesh.render(batch.shader, GL20.GL_TRIANGLES)
-        batch.setBlending(BlendingMode.ALPHA)
     }
 }

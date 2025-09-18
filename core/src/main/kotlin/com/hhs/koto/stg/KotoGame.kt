@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,8 +43,8 @@ import com.hhs.koto.app.Config.worldH
 import com.hhs.koto.app.Config.worldOriginX
 import com.hhs.koto.app.Config.worldOriginY
 import com.hhs.koto.app.Config.worldW
-import com.hhs.koto.app.ui.VfxOutputDrawable
 import com.hhs.koto.stg.bullet.BasicBullet
+import com.hhs.koto.stg.graphics.VfxOutputDrawable
 import com.hhs.koto.stg.bullet.Bullet
 import com.hhs.koto.stg.bullet.PlayerBullet
 import com.hhs.koto.stg.graphics.*
@@ -59,25 +59,25 @@ import java.util.*
 class KotoGame : Disposable {
     var state: GameState = GameState.RUNNING
 
-    val backgroundVfx = VfxManager(Pixmap.Format.RGBA8888, options.frameWidth, options.frameHeight)
-    val vfx = VfxManager(Pixmap.Format.RGBA8888, options.frameWidth, options.frameHeight)
-    val postVfx = VfxManager(Pixmap.Format.RGBA8888, options.frameWidth, options.frameHeight)
+    val backgroundVfx = VfxManager(Pixmap.Format.RGBA8888, options.frameBufferWidth, options.frameBufferHeight)
+    val vfx = VfxManager(Pixmap.Format.RGBA8888, options.frameBufferWidth, options.frameBufferHeight)
+    val postVfx = VfxManager(Pixmap.Format.RGBA8888, options.frameBufferWidth, options.frameBufferHeight)
 
     val tasks = ParallelTask()
     val backgroundViewport =
         StretchViewport(worldW, worldH, OrthographicCamera(worldW, worldH).apply {
-            position.x = worldW / 2f - worldOriginX
-            position.y = worldH / 2f - worldOriginY
+            position.x = worldW / 2 - worldOriginX
+            position.y = worldH / 2 - worldOriginY
         })
     val stageViewport =
         StretchViewport(worldW, worldH, OrthographicCamera(worldW, worldH).apply {
-            position.x = worldW / 2f - worldOriginX
-            position.y = worldH / 2f - worldOriginY
+            position.x = worldW / 2 - worldOriginX
+            position.y = worldH / 2 - worldOriginY
         })
     val hudViewport =
         StretchViewport(worldW, worldH, OrthographicCamera(worldW, worldH).apply {
-            position.x = worldW / 2f - worldOriginX
-            position.y = worldH / 2f - worldOriginY
+            position.x = worldW / 2 - worldOriginX
+            position.y = worldH / 2 - worldOriginY
         })
 
     val batch = SpriteBatch(
@@ -86,7 +86,9 @@ class KotoGame : Disposable {
             Gdx.files.classpath("gdxvfx/shaders/default.vert").readString(),
             A["shader/koto_hsv.frag"],
         ),
-    )
+    ).apply {
+        setBlending(BlendingMode.ALPHA)
+    }
 
     /**
      * Drawer to draw lasers
@@ -110,7 +112,7 @@ class KotoGame : Disposable {
     val frameScheduler = FrameScheduler(this)
     val logger = Logger("Game", Config.logLevel)
     val playerBullets = OptimizedLayer<PlayerBullet>(
-        -10, Rectangle(
+        -100, Rectangle(
             -Config.bulletDeleteDistance - worldOriginX,
             -Config.bulletDeleteDistance - worldOriginY,
             Config.bulletDeleteDistance * 2 + worldW,
@@ -142,10 +144,10 @@ class KotoGame : Disposable {
     val particles = OptimizedLayer<Drawable>(200).apply {
         stage.addDrawable(this)
     }
-    val enemies = DrawableLayer<Enemy>(-200).apply {
+    val enemies = DrawableLayer<Enemy>(50).apply {
         stage.addDrawable(this)
     }
-    val bosses = DrawableLayer<Boss>(-150).apply {
+    val bosses = DrawableLayer<Boss>(100).apply {
         stage.addDrawable(this)
     }
     val bossNameDisplay = BossNameDisplay().apply {
@@ -242,7 +244,7 @@ class KotoGame : Disposable {
         GameData.ScoreEntry("", Date(), score, creditCount)
 
     fun update() {
-        speedUpMultiplier = if (VK.SPEED_UP.pressed()) {
+        speedUpMultiplier = if (VK.SPEED_UP.pressed() && (inReplay || Config.allowSpeedUpOutOfReplay)) {
             options.speedUpMultiplier
         } else {
             1
@@ -259,11 +261,6 @@ class KotoGame : Disposable {
     }
 
     fun tick() {
-        // ensures game initialized properly before its state can be saved
-        if (VK.PAUSE.pressed()) {
-            state = GameState.PAUSED
-            return
-        }
         if (!inReplay) {
             replay.logKeys()
         } else {
@@ -333,6 +330,11 @@ class KotoGame : Disposable {
         }
 
         frame++
+
+        if (VK.PAUSE.pressed()) {
+            state = GameState.PAUSED
+            return
+        }
     }
 
     fun end() {

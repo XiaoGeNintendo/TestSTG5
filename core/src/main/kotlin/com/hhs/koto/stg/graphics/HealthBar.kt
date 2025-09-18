@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ import com.hhs.koto.stg.Drawable
 import com.hhs.koto.stg.task.BasicSpell
 import com.hhs.koto.util.*
 import ktx.collections.GdxArray
+import ktx.collections.lastIndex
 import space.earlygrey.shapedrawer.ShapeDrawer
 
 class HealthBar(
@@ -41,6 +42,7 @@ class HealthBar(
     val radius: Float = 50f,
     val borderColor: Color = RED_HSV,
     val barColor: Color = WHITE_HSV,
+    override val zIndex: Int = 900,
 ) : Drawable {
     @Suppress("SetterBackingFieldAssignment", "UNUSED_PARAMETER")
     override var x: Float
@@ -154,7 +156,7 @@ class HealthBar(
     fun currentSegmentDepleted(): Boolean = currentHealth <= 0
 
     fun nextSegment() {
-        if (currentSegment < segments.size - 1) {
+        if (currentSegment < segments.lastIndex) {
             currentSegment++
             currentHealth = segments[currentSegment]
         } else {

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Hell Hole Studios
+ * Copyright (c) 2021-2022 Hell Hole Studios
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,11 +25,12 @@
 
 package com.hhs.koto.demo.player
 
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.hhs.koto.stg.graphics.SpriteDrawable
+import com.hhs.koto.util.BlendingMode
 import com.hhs.koto.util.alpha
+import com.hhs.koto.util.setBlending
 
 class AmuletParticle(
     x: Float,
@@ -55,8 +56,8 @@ class AmuletParticle(
     }
 
     override fun draw(batch: Batch, parentAlpha: Float, subFrameTime: Float) {
-        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE)
+        batch.setBlending(BlendingMode.ADD)
         super.draw(batch, parentAlpha, subFrameTime)
-        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+        batch.setBlending(BlendingMode.ALPHA)
     }
 }
