@@ -55,29 +55,27 @@ object Stage1Spell1 : BasicSpell<AyaBoss>(AyaBoss::class.java) {
 
     override fun spell(): Task = CoroutineTask {
         val boss = getBoss()
+
+        //Create spellcard cutin effect
         game.stage.addDrawable(Cutin(getRegion("portrait/aya/attack.png")))
         repeat(20) {
-            wander(boss, 120)
-            cast(boss.x, boss.y)
+            wander(boss, 120) //wander for 120 frames. Touhou bosses love to do this.
+            cast(boss.x, boss.y) //cast effect
             wait(90)
 
-            cast2(boss.x, boss.y)
+            cast2(boss.x, boss.y) //another cast effect
             wait(30)
 
-            game.shaking = 100
-            wait(180)
-            game.shaking = 0
-
-            boss.usingAction = true
+            boss.usingAction = true //use action animation instead of idle
             repeat(3) {
-                ring(
-                    "DS_BALL_M_A_BLUE",
+                ring( //creating patterns is simple!
+                    "DS_BALL_M_A_BLUE", //asset name
                     boss.x,
                     boss.y,
-                    50f,
-                    difficultySelect(8, 12, 16, 20),
-                    startAngle = random(0f, 360f),
-                    speed = 5f,
+                    50f, //radius
+                    difficultySelect(8, 12, 16, 20), //number of bullets, easily scaled by difficulty
+                    startAngle = random(0f, 360f), //angle
+                    speed = 5f, //speed
                 )
                 wait(20)
             }
